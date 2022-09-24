@@ -2,7 +2,7 @@
   "name": "@example/basics",
   "type": "module",
   "version": "0.0.1",
-  "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -13,6 +13,8 @@
   "dependencies": {
     "@astrojs/react": "^1.1.4",
     "astro": "^1.2.8",
+    "commonmark": "^0.30.0",
+    "prettier-plugin-astro": "^0.5.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }

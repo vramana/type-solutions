@@ -1,0 +1,86 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import commonmark from "commonmark";
+
+const renderer = new commonmark.HtmlRenderer();
+
+const { question } = Astro.params;
+
+const number = Number(question.split("-")[0]);
+
+const issuesUrl =
+  "https://api.github.com/repos/type-challenges/type-challenges/issues";
+
+const res = await fetch(`${issuesUrl}?labels=${number},answer`);
+
+let answers = await res.json();
+
+answers = answers.map((answer) => {
+  const { body } = answer;
+  const reader = new commonmark.Parser();
+  const parsed = reader.parse(body);
+  const html = renderer.render(parsed);
+  return {
+    ...answer,
+    body: html,
+  };
+});
+
+export function getStaticPaths() {
+  return [];
+}
+
+function cleanupBody(body) {
+  const lines = body.split("\n");
+}
+
+// Cache this page
+const CACHE_TIME = 10 * 60;
+Astro.response.headers.set(
+  "Cache-Control",
+  `s-maxage=${CACHE_TIME}, stale-while-revalidate`
+);
+---
+
+<Layout title={`Type Challenges: ${question} Solution`}>
+  <h3>{question}</h3>
+  <p class="back">
+    <a href="../../">Back</a>
+  </p>
+
+  {
+    answers.map((answer) => (
+      <div class="answer">
+        <Fragment set:html={answer.body} />
+        <p class="solution">
+          Solution by {answer.user.login}{" "}
+          <a href={answer.html_url}>#{answer.number}</a>
+        </p>
+      </div>
+    ))
+  }
+</Layout>
+
+<style is:global>
+  h3 {
+    text-align: center;
+  }
+  .back {
+    margin: 1em;
+    text-align: center;
+  }
+  .language-ts {
+    font-size: 16px;
+  }
+  .answer {
+    margin-bottom: 2rem;
+  }
+  .answer p {
+    font-size: 14px;
+  }
+  .solution {
+    font-size: 12px;
+    color: #666;
+    margin-left: 1rem;
+  }
+</style>
