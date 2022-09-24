@@ -1,8 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import commonmark from "commonmark";
-
-const renderer = new commonmark.HtmlRenderer();
+import { Parser } from "commonmark";
 
 const { question } = Astro.params;
 
@@ -17,7 +15,7 @@ let answers = await res.json();
 
 answers = answers.map((answer) => {
   const { body } = answer;
-  const reader = new commonmark.Parser();
+  const reader = new Parser();
   const parsed = reader.parse(body);
   const html = renderer.render(parsed);
   return {
