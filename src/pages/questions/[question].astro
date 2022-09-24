@@ -1,6 +1,9 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { Parser } from "commonmark";
+import { HtmlRenderer, Parser } from "commonmark";
+
+const renderer = new HtmlRenderer();
+const reader = new Parser();
 
 const { question } = Astro.params;
 
@@ -15,7 +18,6 @@ let answers = await res.json();
 
 answers = answers.map((answer) => {
   const { body } = answer;
-  const reader = new Parser();
   const parsed = reader.parse(body);
   const html = renderer.render(parsed);
   return {
